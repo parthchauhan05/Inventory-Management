@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="480.0" maxWidth="175.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="175.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inventory.DrawerController">
+   <children>
+      <ImageView fitHeight="140.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/1.jpg" />
+         </image>
+      </ImageView>
+      <JFXButton  prefHeight="50.0" prefWidth="177.0" ripplerFill="#c6c6c6" text="Add" accessibleText="Add">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXButton prefHeight="50.0" prefWidth="175.0" ripplerFill="#c6c6c6" text="Dashboard" accessibleText="Dashboard">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXButton onAction="#gotoHome" prefHeight="50.0" prefWidth="175.0" ripplerFill="#c6c6c6" text="Sign Out" accessibleText="SignOut">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXButton>
+   </children>
+</VBox>

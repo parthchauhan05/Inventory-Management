@@ -2,23 +2,43 @@
 package inventory;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 
 /**
  *
  * @author parth
  */
 public class SignUpController implements Initializable{
+    
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+    static final String DB_URL = "jdbc:mysql://localhost/INVENTORY";
+
+   //  Database credentials
+    static final String USER = "root";
+    static final String PASS = "root";
+    Connection conn = null;
+    Statement stmt = null;
    
     @FXML
     private AnchorPane signuppane;
@@ -43,7 +63,9 @@ public class SignUpController implements Initializable{
     
     @FXML
     private JFXButton signupbackbtn;
-
+    
+    @FXML
+    private StackPane stackPane;
 
     @FXML
     private JFXTextField email;
@@ -56,6 +78,99 @@ public class SignUpController implements Initializable{
         AnchorPane pane = FXMLLoader.load(getClass().getResource("SignIn.fxml"));
         signuppane.getChildren().setAll(pane);
     }
+    
+    @FXML
+    void signUp(ActionEvent event) throws IOException {
+        System.out.println("IN SIGN UP");
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setHeading(new Text("Sign Up"));
+        
+        if(fname.getText().isEmpty()){
+            content.setBody(new Text("Please enter First Name"));
+        }
+        else if(lname.getText().isEmpty()){
+            content.setBody(new Text("Please enter Last Name"));
+        }
+        else if(email.getText().isEmpty()){
+            content.setBody(new Text("Please enter Email"));
+        }
+        else if(phonenumber.getText().isEmpty()){
+            content.setBody(new Text("Please enter Phone Number"));
+        }
+        else if(password.getText().isEmpty()){
+            content.setBody(new Text("Please enter Password"));
+        }
+        else if(!(male.isSelected() || female.isSelected())){
+            content.setBody(new Text("Please select Gender"));
+
+        }
+        else{
+            content.setBody(new Text("Sign Up Successful, "+fname.getText()));
+            try{
+                //STEP 2: Register JDBC driver
+                Class.forName("com.mysql.jdbc.Driver");
+
+                //STEP 3: Open a connection
+                System.out.println("Connecting to a selected database...");
+                conn = DriverManager.getConnection(DB_URL, USER, PASS);
+                System.out.println("Connected database successfully...");
+      
+                //STEP 4: Execute a query
+                stmt = conn.createStatement();
+                String sql = "INSERT INTO Users "+
+                        "Values (?, ?, ?, ?, ?, ? )";
+                //      stmt.executeUpdate(sql);
+                PreparedStatement ps=conn.prepareStatement(sql);
+                ps.setString(1,fname.getText());
+                ps.setString(2,lname.getText());
+                ps.setString(3,email.getText());
+                System.out.println(phonenumber.getText());
+                try{
+                    ps.setInt(4,Integer.parseInt(phonenumber.getText()));
+                }catch(NumberFormatException e){
+                    content.setBody(new Text("Enter NUMBERS in Phone Number not anything else"));
+                }
+                ps.setString(6,password.getText());
+                if(male.isSelected()){
+                    ps.setString(5,male.getText());
+                }
+                else{
+                    ps.setString(5,female.getText());
+                }
+                System.out.println(ps);
+                
+                boolean x = ps.execute();
+                System.out.println(x);
+            }catch(SQLException se){
+                //Handle errors for JDBC
+                se.printStackTrace();
+            }catch(Exception e){
+                //Handle errors for Class.forName
+                e.printStackTrace();
+            }
+        }
+        JFXDialog dialog = new JFXDialog(stackPane,content,JFXDialog.DialogTransition.CENTER);
+        JFXButton dialogCloseBtn = new JFXButton("Close");
+        dialogCloseBtn.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                dialog.close();
+            }  
+        });
+        content.setActions(dialogCloseBtn);
+      
+        dialog.show();
+        
+//        AnchorPane pane = FXMLLoader.load(getClass().getResource("SignIn.fxml"));
+//        signuppane.getChildren().setAll(pane);
+    }
+    
+    @FXML
+    void gotoHome(ActionEvent event) throws IOException {
+        AnchorPane pane = FXMLLoader.load(getClass().getResource("Main.fxml"));
+        signuppane.getChildren().setAll(pane);
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
        

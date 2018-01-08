@@ -6,24 +6,29 @@
 package inventory;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import static inventory.Inventory.DB_URL;
-import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.EventHandler;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -58,9 +63,17 @@ public class SignInController implements Initializable {
 
     @FXML
     private JFXPasswordField password;
+    
+    @FXML
+    private StackPane stackPane;
 
     @FXML
     void makeSignin(ActionEvent event) {
+      System.out.println("IN SIGN IN");
+      JFXDialogLayout content = new JFXDialogLayout();
+      content.setHeading(new Text("Sign In"));
+      
+      
         try{
       //STEP 2: Register JDBC driver
       Class.forName("com.mysql.jdbc.Driver");
@@ -72,20 +85,69 @@ public class SignInController implements Initializable {
       
       //STEP 4: Execute a query
       stmt = conn.createStatement();
-      String sql = "SELECT fname, lname FROM Users WHERE email = ?";
+        String sql = "SELECT fname, password  FROM Users WHERE email = ?";
 //      stmt.executeUpdate(sql);
-        PreparedStatement ps=conn.prepareStatement(sql);
-        ps.setString(1,username.getText());
-//       ps.setString(2,password.getText());
-        System.out.println(ps);
-      ResultSet rs = ps.executeQuery();
-        System.out.println("Created table in given database...");
-        while(rs.next()){
-            String fname = rs.getString("fname");
-            String lname = rs.getString("lname");
+        String fname = null;
+        if(!username.getText().isEmpty()){
             
-            System.out.println(fname+' '+lname);
+            PreparedStatement ps=conn.prepareStatement(sql);
+            ps.setString(1,username.getText());
+    //       ps.setString(2,password.getText());
+            
+            ResultSet rs = ps.executeQuery();
+            System.out.println(ps);
+            String lname = "SomeText";
+            
+            while(rs.next()){
+                fname = rs.getString("fname");
+                lname = rs.getString("password");
+
+                System.out.println(fname+' '+lname);
+            }
+            if(fname == null){
+                content.setBody(new Text(username.getText()+", not found"));
+            }
+            else{
+                if(lname.equals(password.getText())){
+                    content.setBody(new Text("Welcome, "+fname));
+                    try (Writer out = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream("./src/inventory/user.txt"), "utf-8"))) {
+//                    writer.write("something");
+
+                            System.out.println("Writting");
+                             out.write(fname);
+                             System.out.println("Written");
+                             }
+                }
+                else{
+                    content.setBody(new Text("Wrong Password, "+fname));
+                }
+            }
         }
+        else{
+            content.setBody(new Text("Enter Details"));
+        }
+
+      
+        JFXDialog dialog = new JFXDialog(stackPane,content,JFXDialog.DialogTransition.CENTER);
+        JFXButton dialogCloseBtn = new JFXButton("Close");
+        dialogCloseBtn.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                dialog.close();
+                
+                AnchorPane pane = null;
+                try {
+                    pane = FXMLLoader.load(getClass().getResource("Dashboard.fxml"));
+                } catch (IOException ex) {
+                    Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                rootpane.getChildren().setAll(pane);
+            }  
+        });
+      content.setActions(dialogCloseBtn);
+      
+      dialog.show();
    }catch(SQLException se){
       //Handle errors for JDBC
       se.printStackTrace();
@@ -93,6 +155,7 @@ public class SignInController implements Initializable {
       //Handle errors for Class.forName
       e.printStackTrace();
    }
+        
     }
 
     @FXML
@@ -110,12 +173,15 @@ public class SignInController implements Initializable {
 //          }
     }
     
+    @FXML
+    void gotoHome(ActionEvent event) throws IOException {
+        AnchorPane pane = FXMLLoader.load(getClass().getResource("Main.fxml"));
+        rootpane.getChildren().setAll(pane);
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        File file = new File("src/images/logo_name.png");
-        Image image = new Image(file.toURI().toString());
-        img1.setImage(image);
+
     }    
 
     private AnchorPane FXMLLoader(URL resource) {

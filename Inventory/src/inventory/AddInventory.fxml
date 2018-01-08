@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.*?>
+
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="720.0" style="-fx-background-color: #e0e0e0;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inventory.AddInventoryController">
+   <children>
+      <JFXDrawer fx:id="drawer" defaultDrawerSize="175.0" layoutX="-8.0" layoutY="42.0" maxHeight="480.0" maxWidth="175.0" overLayVisible="false" prefHeight="438.0" prefWidth="175.0" />
+      <JFXHamburger fx:id="hamburger" layoutX="14.0" layoutY="14.0" />
+      <Label layoutX="50.0" layoutY="10.0" text="Welcome" />
+      <Text fx:id="text" layoutX="50.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="sometext" />
+      <Pane layoutX="333.0" layoutY="36.0" prefHeight="408.0" prefWidth="340.0" style="-fx-background-color: #ffffff;">
+         <effect>
+            <DropShadow blurType="GAUSSIAN" />
+         </effect>
+         <children>
+            <JFXTextField fx:id="addName" labelFloat="true" layoutX="68.0" layoutY="77.0" prefHeight="25.0" prefWidth="190.0" promptText="Name" />
+            <JFXTextField fx:id="addCompany" labelFloat="true" layoutX="68.0" layoutY="124.0" prefHeight="25.0" prefWidth="190.0" promptText="Company" />
+            <JFXTextField fx:id="addQuantity" labelFloat="true" layoutX="68.0" layoutY="173.0" prefHeight="25.0" prefWidth="190.0" promptText="Quantity" />
+            <JFXTextField fx:id="addPrice" labelFloat="true" layoutX="68.0" layoutY="220.0" prefHeight="25.0" prefWidth="190.0" promptText="Price" />
+            <JFXTextField fx:id="addOwns" labelFloat="true" layoutX="68.0" layoutY="268.0" prefHeight="25.0" prefWidth="190.0" promptText="Owns" />
+            <JFXButton fx:id="addbtn" buttonType="RAISED" layoutX="137.0" layoutY="334.0" onAction="#addItem" prefHeight="33.0" prefWidth="72.0" ripplerFill="WHITE" style="-fx-background-color: #283593;" text="Add" textFill="WHITE" />
+            <ImageView fitHeight="68.0" fitWidth="161.0" layoutX="40.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/inventory.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="68.0" fitWidth="196.0" layoutX="153.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/management.png" />
+               </image>
+            </ImageView>
+            <StackPane fx:id="stackPane" layoutX="-76.0" layoutY="163.0" prefHeight="8.0" prefWidth="184.0" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

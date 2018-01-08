@@ -57,7 +57,7 @@ public class Inventory extends Application {
       //Handle errors for Class.forName
       e.printStackTrace();
    }
-        Parent root = FXMLLoader.load(getClass().getResource("SignIn.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         
         Scene scene = new Scene(root);
         
