@@ -113,17 +113,17 @@ public class DashboardController implements Initializable{
         System.out.println("Just trying");
         
         JFXTreeTableColumn<Item, String> col1 = new JFXTreeTableColumn<>("Name");
-        col1.setPrefWidth(120);
+        col1.setPrefWidth(110);
         JFXTreeTableColumn<Item, String> col2 = new JFXTreeTableColumn<>("Company");
-        col2.setPrefWidth(104);
+        col2.setPrefWidth(100);
         JFXTreeTableColumn<Item, Number> col3 = new JFXTreeTableColumn<>("Quantity");
         col3.setPrefWidth(60);
         JFXTreeTableColumn<Item, Number> col4 = new JFXTreeTableColumn<>("Price");
         col4.setPrefWidth(50);
         JFXTreeTableColumn<Item, String> col5 = new JFXTreeTableColumn<>("Purchase");
-        col5.setPrefWidth(100);
+        col5.setPrefWidth(95);
         JFXTreeTableColumn<Item, String> col6 = new JFXTreeTableColumn<>("Owner");
-        col6.setPrefWidth(100);
+        col6.setPrefWidth(95);
         
         col1.setCellValueFactory((TreeTableColumn.CellDataFeatures<Item,String> param) -> param.getValue().getValue().getName());
         col2.setCellValueFactory((TreeTableColumn.CellDataFeatures<Item,String> param) -> param.getValue().getValue().getCompany());
@@ -133,7 +133,6 @@ public class DashboardController implements Initializable{
         col6.setCellValueFactory((TreeTableColumn.CellDataFeatures<Item,String> param) -> param.getValue().getValue().getOwns());
         
         ObservableList<Item> items = FXCollections.observableArrayList();
-        items.add(new Item("Mouse", "HP", 2, 150, "Parth", ""));
           try{
             //STEP 2: Register JDBC driver
             Class.forName("com.mysql.jdbc.Driver");
@@ -158,6 +157,7 @@ public class DashboardController implements Initializable{
            
             
             while(rs.next()){
+             
                 items.add(new Item(rs.getString("name"), rs.getString("company"), rs.getInt("quantity"), rs.getInt("price"), rs.getString("purchased_by"), rs.getString("owns")));
             }
         

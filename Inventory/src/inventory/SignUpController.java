@@ -16,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -78,7 +80,8 @@ public class SignUpController implements Initializable{
         AnchorPane pane = FXMLLoader.load(getClass().getResource("SignIn.fxml"));
         signuppane.getChildren().setAll(pane);
     }
-    
+    boolean flag = true;
+    boolean flag2 = true;
     @FXML
     void signUp(ActionEvent event) throws IOException {
         System.out.println("IN SIGN UP");
@@ -87,25 +90,29 @@ public class SignUpController implements Initializable{
         
         if(fname.getText().isEmpty()){
             content.setBody(new Text("Please enter First Name"));
+            flag = false;
         }
         else if(lname.getText().isEmpty()){
             content.setBody(new Text("Please enter Last Name"));
+            flag = false;
         }
         else if(email.getText().isEmpty()){
             content.setBody(new Text("Please enter Email"));
+            flag = false;
         }
         else if(phonenumber.getText().isEmpty()){
             content.setBody(new Text("Please enter Phone Number"));
+            flag = false;
         }
         else if(password.getText().isEmpty()){
             content.setBody(new Text("Please enter Password"));
+            flag = false;
         }
         else if(!(male.isSelected() || female.isSelected())){
             content.setBody(new Text("Please select Gender"));
-
+            flag = false;
         }
         else{
-            content.setBody(new Text("Sign Up Successful, "+fname.getText()));
             try{
                 //STEP 2: Register JDBC driver
                 Class.forName("com.mysql.jdbc.Driver");
@@ -129,6 +136,7 @@ public class SignUpController implements Initializable{
                     ps.setInt(4,Integer.parseInt(phonenumber.getText()));
                 }catch(NumberFormatException e){
                     content.setBody(new Text("Enter NUMBERS in Phone Number not anything else"));
+                    flag = false;
                 }
                 ps.setString(6,password.getText());
                 if(male.isSelected()){
@@ -138,9 +146,15 @@ public class SignUpController implements Initializable{
                     ps.setString(5,female.getText());
                 }
                 System.out.println(ps);
-                
-                boolean x = ps.execute();
-                System.out.println(x);
+                System.out.println(flag);
+                if (flag){
+                    flag2 =false;
+                    ps.execute();
+                }
+                System.out.println(flag2);
+                if(!flag2){
+                    content.setBody(new Text("Sign Up successful, "+fname.getText()));
+                }
             }catch(SQLException se){
                 //Handle errors for JDBC
                 se.printStackTrace();
@@ -154,15 +168,30 @@ public class SignUpController implements Initializable{
         dialogCloseBtn.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(dialog.getContent().getAccessibleText());
                 dialog.close();
+                AnchorPane pane = null;
+                
+                try {
+                    if(!flag2){
+                        pane = FXMLLoader.load(getClass().getResource("Main.fxml"));
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try{
+                    signuppane.getChildren().setAll(pane);
+                }catch(NullPointerException e){
+                     e.printStackTrace();
+                }
+                
             }  
         });
         content.setActions(dialogCloseBtn);
       
         dialog.show();
         
-//        AnchorPane pane = FXMLLoader.load(getClass().getResource("SignIn.fxml"));
-//        signuppane.getChildren().setAll(pane);
+        
     }
     
     @FXML
